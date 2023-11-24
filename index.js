@@ -1,7 +1,9 @@
-const express = require('express');
-const dotenv = require('dotenv');
-const mongoose = require('mongoose');
-
+const express = require("express");
+const dotenv = require("dotenv");
+const mongoose = require("mongoose");
+const cookieParser = require("cookie-parser");
+const cors = require("cors");
+const authRoutes = require("./Routes/auth");
 const app = express();
 
 dotenv.config();
@@ -11,28 +13,35 @@ const connect = async () => {
     //trying  to connect to the mongoURI
     await mongoose.connect(`${process.env.MONGO_DB}`);
     // await mongoose.connect('mongodb://127.0.0.1:27017/oms');
-
-    console.log('Connected to MongoDb');
+    console.log("Connected to MongoDb");
   } catch (error) {
-    console.log('ERROR :', error);
+    console.log("ERROR :", error);
     throw error;
   }
 };
 
+// Routes and middleware
+app.use(cors());
+app.use(express.json());
+app.use(express.urlencoded());
+app.use(cookieParser());
+
+app.use("/api/auth", authRoutes);
+
 //call back value of mongoose,connect
 //if there is problem in mongodb itself it will try to connected
-mongoose.connection.on('connected', () => {
-  console.log('Mongodb connected');
+mongoose.connection.on("connected", () => {
+  console.log("Mongodb connected");
 });
-mongoose.connection.on('disconnected', () => {
-  console.log('Mongodb disconnected');
+mongoose.connection.on("disconnected", () => {
+  console.log("Mongodb disconnected");
 });
 
 app.use(express.json());
 app.use(express.urlencoded());
-app.get('/', (req, res) => {
+app.get("/", (req, res) => {
   res.status(201).json({
-    message: 'Landing page!!',
+    message: "Landing page!!",
   });
 });
 app.listen(process.env.PORT || 8080, () => {
