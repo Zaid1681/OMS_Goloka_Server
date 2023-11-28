@@ -4,6 +4,6 @@ const getApplicants = require("../Controller/applicants");
 
 const router = express.Router();
 
-router.get("/applicants", getApplicants);
+router.get("/getapplicants", getApplicants);
 
 module.exports = router;

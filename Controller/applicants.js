@@ -1,9 +1,9 @@
-const Applicants = require("../Schemas/Applicants.js");
+const ApplicantModel = require("../Schemas/Appi.js");
 
 const getApplicants = async (req, res, next) => {
   const { Name, Email, ...others } = req.query;
   try {
-    const applicants = await Applicants.find({
+    const applicants = await ApplicantModel.find({
       ...others,
     });
     res.status(200).json({ applicants });

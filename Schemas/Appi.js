@@ -1,5 +1,3 @@
-// ExcelData.js (or UserModel.js)
-
 const mongoose = require("mongoose");
 
 const applicantSchema = new mongoose.Schema({
@@ -31,6 +29,9 @@ const applicantSchema = new mongoose.Schema({
     type: Number,
     unique: true,
   },
+  PortfolioLink: {
+    type: String,
+  },
   Resume: {
     type: String,
     default: "htpp resume link",
@@ -48,7 +49,6 @@ const applicantSchema = new mongoose.Schema({
     default: "",
   },
 });
+const ApplicantModel = mongoose.model("applicantsData", applicantSchema);
 
-const Applicants = mongoose.model("Applicants", applicantSchema);
-
-module.exports = Applicants;
+module.exports = ApplicantModel;
