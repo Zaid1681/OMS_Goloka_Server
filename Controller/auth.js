@@ -61,7 +61,7 @@ const login = async (req, res, next) => {
       .json({ ...otherDetails });
     console.log("token : ", token);
   } catch (error) {
-    console.log("got an eror");
+    console.log("got an erorr");
     next(error);
   }
 };

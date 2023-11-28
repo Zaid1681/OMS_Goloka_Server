@@ -1,9 +1,9 @@
 const express = require("express");
-const ApplicantModel = require("../Schemas/Applicants");
+const ApplicantModel = require("../Schemas/Appi");
 const TeachTeamModel = require("../Schemas/TechTeam");
 const MarketingTeamModel = require("../Schemas/MarketingTeam");
 const HrTeamModel = require("../Schemas/HrTeam");
-const InterviewSchedule = require('../Schemas/Interviews');
+const InterviewSchedule = require("../Schemas/Interviews");
 
 const router = express.Router();
 
@@ -72,26 +72,26 @@ router.get("/hrTeam", async (req, res) => {
 });
 
 // Endpoint to save interview schedule
-router.post('/interviews', async (req, res) => {
+router.post("/interviews", async (req, res) => {
   try {
     const scheduleData = req.body;
     const newSchedule = new InterviewSchedule(scheduleData);
     await newSchedule.save();
-    res.json({ success: true, message: 'Interview scheduled successfully' });
+    res.json({ success: true, message: "Interview scheduled successfully" });
   } catch (error) {
-    console.error('Error scheduling interview:', error);
-    res.status(500).json({ success: false, message: 'Internal server error' });
+    console.error("Error scheduling interview:", error);
+    res.status(500).json({ success: false, message: "Internal server error" });
   }
 });
-router.get('/getInterviews', async (req, res) => {
+router.get("/getInterviews", async (req, res) => {
   try {
     // Fetch interviews from the database (replace with your actual query)
     const interviews = await InterviewSchedule.find();
 
     res.status(200).json(interviews);
   } catch (error) {
-    console.error('Error fetching interviews:', error);
-    res.status(500).json({ error: 'Internal Server Error' });
+    console.error("Error fetching interviews:", error);
+    res.status(500).json({ error: "Internal Server Error" });
   }
 });
 module.exports = router;
