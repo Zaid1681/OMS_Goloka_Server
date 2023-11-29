@@ -10,6 +10,8 @@ const multer = require("multer");
 const upload = multer({ dest: "uploads/" });
 const xlsx = require("xlsx");
 const app = express();
+const nodemailer = require("nodemailer"); // Add nodemailer
+
 // const UserData = require("./Schemas/User"); // Define your model schema
 const ApplicantModel = require("./Schemas/Appi"); // Define your model schema
 const uploadData = require("./Routes/upload");
@@ -27,6 +29,31 @@ const connect = async () => {
     // throw error;
   }
 };
+
+
+// const transporter = nodemailer.createTransport({
+//   service: 'gmail',
+//   auth: {
+//     user: 'abc@gmail.com', // Replace with your email
+//     pass: 'password', // Replace with your email password
+//   },
+// });
+
+// const sendEmail = async (to, subject, text) => {
+//   const mailOptions = {
+//     from: 'abc@gmail.com', // Replace with your email
+//     to,
+//     subject,
+//     text,
+//   };
+
+//   try {
+//     const info = await transporter.sendMail(mailOptions);
+//     console.log('Email sent:', info.response);
+//   } catch (error) {
+//     console.error('Error sending email:', error);
+//   }
+// };
 
 // Routes and middleware
 app.use(cors());
@@ -48,42 +75,31 @@ mongoose.connection.on("disconnected", () => {
   console.log("Mongodb disconnected");
 });
 
-// app.post("/upload", upload.single("file"), async (req, res) => {
-//   const filePath = req.file.path;
-//   const workbook = xlsx.readFile(filePath);
-//   const sheetName = workbook.SheetNames[0];
-//   const excelData = xlsx.utils.sheet_to_json(workbook.Sheets[sheetName]);
+app.post("/api/scheduleInterview", async (req, res) => {
+  const { candidateEmail, interviewerEmail, interviewDetails } = req.body;
 
-//   try {
-//     // console.log("Excel Data:", excelData);
+  try {
+    // Save the interview details to MongoDB
+    // (Assuming you have a model/schema for interviews)
+    // await InterviewModel.create(interviewDetails);
 
-//     // Collect all emails from the Excel data
-//     const emailsToCheck = excelData.map((data) => data.Email);
+    // Send email to the candidate
+    await sendEmail(candidateEmail, 'Interview Scheduled', 'Your interview has been scheduled.');
 
-//     // Find all existing emails in the database
-//     const existingEmails = await ApplicantModel.find({
-//       Email: { $in: emailsToCheck },
-//     });
-//     const existingEmailSet = new Set(existingEmails.map((data) => data.Email));
+    // Send email to the interviewer
+    await sendEmail(interviewerEmail, 'Interview Scheduled', 'An interview has been scheduled.');
 
-//     // Filter out the data that has unique emails not present in the database
-//     const filteredData = excelData.filter(
-//       (data) => !existingEmailSet.has(data.Email)
-//     );
+    res.json({ message: 'Interview scheduled successfully' });
+  } catch (error) {
+    console.error('Error scheduling interview:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
 
-//     console.log("Filtered Data:", filteredData);
-
-//     if (filteredData.length > 0) {
-//       await ApplicantModel.insertMany(filteredData);
-//       res.json({ message: "File data saved to MongoDB" });
-//     } else {
-//       res.json({ message: "No new data to insert" });
-//     }
-//   } catch (error) {
-//     console.error("Error saving data to MongoDB:", error);
-//     res.status(500).json({ error: "Internal server error" });
-//   }
-// });
+app.post("/upload", upload.single("file"), async (req, res) => {
+  const filePath = req.file.path;
+  const workbook = xlsx.readFile(filePath);
+  const sheetName = workbook.SheetNames[0];
 
 app.use(express.json());
 app.use(express.urlencoded());
