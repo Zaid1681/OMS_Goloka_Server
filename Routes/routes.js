@@ -4,6 +4,7 @@ const TeachTeamModel = require("../Schemas/TechTeam");
 const MarketingTeamModel = require("../Schemas/MarketingTeam");
 const HrTeamModel = require("../Schemas/HrTeam");
 const InterviewSchedule = require('../Schemas/Interviews');
+const moment = require('moment');
 
 const router = express.Router();
 
@@ -75,6 +76,10 @@ router.get("/hrTeam", async (req, res) => {
 router.post('/interviews', async (req, res) => {
   try {
     const scheduleData = req.body;
+
+    // Format the date to store only the date portion
+    scheduleData.date = moment(scheduleData.date).format('YYYY-MM-DD');
+
     const newSchedule = new InterviewSchedule(scheduleData);
     await newSchedule.save();
     res.json({ success: true, message: 'Interview scheduled successfully' });
@@ -83,6 +88,7 @@ router.post('/interviews', async (req, res) => {
     res.status(500).json({ success: false, message: 'Internal server error' });
   }
 });
+
 router.get('/getInterviews', async (req, res) => {
   try {
     // Fetch interviews from the database (replace with your actual query)
