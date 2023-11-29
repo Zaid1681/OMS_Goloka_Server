@@ -1,0 +1,34 @@
+login page-- email / user , pass ==> db 
+	-- role == oms , attendencev==> db
+	state-- oms --> routing
+	state -- attendance --> routing 
+
+
+Enter data into database==> by using excell sheet data
+storing data into database from excell sheet
+modal --> login --> user id /email , pass , Role(oms , attendance)
+
+Priority --> to enter data into DB from excell --> script
+creating modal --> login page model
+
+login page integration with backend
+
+
+
+1. login page dropdown and upload file button --> saurabh
+2. creating  a excell file with same column name --> aditya
+3. storing excell data into database --> aditya
+4. creating mongoose modal --> zaid
+5. login page integration with database --> zaid
+6. 
+
+
+Login page Inputs :
+For OMS and attendence single login page
+1. email , password, Role : inside dropdown => (1. attendence 2. OMS ( a. admin , b. Hr))
+backend work :
+	1.DB main email , password , role check hoga
+	2. if details correct hai then --> redux state main user ki details set hogi(user name , role) and if user admin hai toh admin page jayega if HR hai toh HR page par jayega
+	3. different user ke according routes hoge .
+
+

@@ -12,6 +12,7 @@ const xlsx = require("xlsx");
 const app = express();
 // const UserData = require("./Schemas/User"); // Define your model schema
 const ApplicantModel = require("./Schemas/Appi"); // Define your model schema
+const uploadData = require("./Routes/upload");
 
 dotenv.config();
 
@@ -36,6 +37,7 @@ app.use(cookieParser());
 app.use("/api/auth", authRoutes);
 app.use("/api", applicants);
 app.use("/api", routes);
+app.use("/api", uploadData);
 
 //call back value of mongoose,connect
 //if there is problem in mongodb itself it will try to connected
@@ -46,42 +48,42 @@ mongoose.connection.on("disconnected", () => {
   console.log("Mongodb disconnected");
 });
 
-app.post("/upload", upload.single("file"), async (req, res) => {
-  const filePath = req.file.path;
-  const workbook = xlsx.readFile(filePath);
-  const sheetName = workbook.SheetNames[0];
-  const excelData = xlsx.utils.sheet_to_json(workbook.Sheets[sheetName]);
+// app.post("/upload", upload.single("file"), async (req, res) => {
+//   const filePath = req.file.path;
+//   const workbook = xlsx.readFile(filePath);
+//   const sheetName = workbook.SheetNames[0];
+//   const excelData = xlsx.utils.sheet_to_json(workbook.Sheets[sheetName]);
 
-  try {
-    // console.log("Excel Data:", excelData);
+//   try {
+//     // console.log("Excel Data:", excelData);
 
-    // Collect all emails from the Excel data
-    const emailsToCheck = excelData.map((data) => data.Email);
+//     // Collect all emails from the Excel data
+//     const emailsToCheck = excelData.map((data) => data.Email);
 
-    // Find all existing emails in the database
-    const existingEmails = await ApplicantModel.find({
-      Email: { $in: emailsToCheck },
-    });
-    const existingEmailSet = new Set(existingEmails.map((data) => data.Email));
+//     // Find all existing emails in the database
+//     const existingEmails = await ApplicantModel.find({
+//       Email: { $in: emailsToCheck },
+//     });
+//     const existingEmailSet = new Set(existingEmails.map((data) => data.Email));
 
-    // Filter out the data that has unique emails not present in the database
-    const filteredData = excelData.filter(
-      (data) => !existingEmailSet.has(data.Email)
-    );
+//     // Filter out the data that has unique emails not present in the database
+//     const filteredData = excelData.filter(
+//       (data) => !existingEmailSet.has(data.Email)
+//     );
 
-    console.log("Filtered Data:", filteredData);
+//     console.log("Filtered Data:", filteredData);
 
-    if (filteredData.length > 0) {
-      await ApplicantModel.insertMany(filteredData);
-      res.json({ message: "File data saved to MongoDB" });
-    } else {
-      res.json({ message: "No new data to insert" });
-    }
-  } catch (error) {
-    console.error("Error saving data to MongoDB:", error);
-    res.status(500).json({ error: "Internal server error" });
-  }
-});
+//     if (filteredData.length > 0) {
+//       await ApplicantModel.insertMany(filteredData);
+//       res.json({ message: "File data saved to MongoDB" });
+//     } else {
+//       res.json({ message: "No new data to insert" });
+//     }
+//   } catch (error) {
+//     console.error("Error saving data to MongoDB:", error);
+//     res.status(500).json({ error: "Internal server error" });
+//   }
+// });
 
 app.use(express.json());
 app.use(express.urlencoded());
