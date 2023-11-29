@@ -4,7 +4,7 @@ const TeachTeamModel = require("../Schemas/TechTeam");
 const MarketingTeamModel = require("../Schemas/MarketingTeam");
 const HrTeamModel = require("../Schemas/HrTeam");
 const InterviewSchedule = require("../Schemas/Interviews");
-
+const moment =require("moment")
 const router = express.Router();
 
 // Define a route handler for getting all applicants
@@ -75,6 +75,10 @@ router.get("/hrTeam", async (req, res) => {
 router.post("/interviews", async (req, res) => {
   try {
     const scheduleData = req.body;
+
+    // Format the date to store only the date portion
+    scheduleData.date = moment(scheduleData.date).format('YYYY-MM-DD');
+
     const newSchedule = new InterviewSchedule(scheduleData);
     await newSchedule.save();
     res.json({ success: true, message: "Interview scheduled successfully" });

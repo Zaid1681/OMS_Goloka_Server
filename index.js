@@ -10,6 +10,8 @@ const multer = require("multer");
 const upload = multer({ dest: "uploads/" });
 const xlsx = require("xlsx");
 const app = express();
+const nodemailer = require("nodemailer"); // Add nodemailer
+
 // const UserData = require("./Schemas/User"); // Define your model schema
 const ApplicantModel = require("./Schemas/Appi"); // Define your model schema
 
@@ -26,6 +28,31 @@ const connect = async () => {
     // throw error;
   }
 };
+
+
+// const transporter = nodemailer.createTransport({
+//   service: 'gmail',
+//   auth: {
+//     user: 'abc@gmail.com', // Replace with your email
+//     pass: 'password', // Replace with your email password
+//   },
+// });
+
+// const sendEmail = async (to, subject, text) => {
+//   const mailOptions = {
+//     from: 'abc@gmail.com', // Replace with your email
+//     to,
+//     subject,
+//     text,
+//   };
+
+//   try {
+//     const info = await transporter.sendMail(mailOptions);
+//     console.log('Email sent:', info.response);
+//   } catch (error) {
+//     console.error('Error sending email:', error);
+//   }
+// };
 
 // Routes and middleware
 app.use(cors());
@@ -44,6 +71,27 @@ mongoose.connection.on("connected", () => {
 });
 mongoose.connection.on("disconnected", () => {
   console.log("Mongodb disconnected");
+});
+
+app.post("/api/scheduleInterview", async (req, res) => {
+  const { candidateEmail, interviewerEmail, interviewDetails } = req.body;
+
+  try {
+    // Save the interview details to MongoDB
+    // (Assuming you have a model/schema for interviews)
+    // await InterviewModel.create(interviewDetails);
+
+    // Send email to the candidate
+    await sendEmail(candidateEmail, 'Interview Scheduled', 'Your interview has been scheduled.');
+
+    // Send email to the interviewer
+    await sendEmail(interviewerEmail, 'Interview Scheduled', 'An interview has been scheduled.');
+
+    res.json({ message: 'Interview scheduled successfully' });
+  } catch (error) {
+    console.error('Error scheduling interview:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
 });
 
 app.post("/upload", upload.single("file"), async (req, res) => {
