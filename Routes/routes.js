@@ -3,13 +3,8 @@ const ApplicantModel = require("../Schemas/Appi");
 const TeachTeamModel = require("../Schemas/TechTeam");
 const MarketingTeamModel = require("../Schemas/MarketingTeam");
 const HrTeamModel = require("../Schemas/HrTeam");
-<<<<<<< HEAD
-const InterviewSchedule = require('../Schemas/Interviews');
-const moment = require('moment');
-=======
 const InterviewSchedule = require("../Schemas/Interviews");
->>>>>>> main
-
+const moment =require("moment")
 const router = express.Router();
 
 // Define a route handler for getting all applicants
@@ -92,12 +87,7 @@ router.post("/interviews", async (req, res) => {
     res.status(500).json({ success: false, message: "Internal server error" });
   }
 });
-<<<<<<< HEAD
-
-router.get('/getInterviews', async (req, res) => {
-=======
 router.get("/getInterviews", async (req, res) => {
->>>>>>> main
   try {
     // Fetch interviews from the database (replace with your actual query)
     const interviews = await InterviewSchedule.find();
